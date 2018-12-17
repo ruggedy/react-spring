@@ -177,6 +177,7 @@ function useTransition (props) {
           const { ctrl, resolve, last } = instance
 
           if (slot === 'update' || slot !== activeSlots.current[key]) {
+            ctrl.isActive && slot !== 'update' && ctrl.stop(true)
             // add the current running slot to the active slots ref so the same slot isnt re-applied
             activeSlots.current[key] = slot
             function onEnd ({ finished }) {
@@ -193,21 +194,22 @@ function useTransition (props) {
                 }
 
                 // onRest needs to be called everytime each item
-                // has finished, it is needed for notif hub to work
+                // has finished, it is needed for notif hub to work.
                 // we could have two seperate callback, one for each
-                // and one for e
+                // and one for a sort of global on rest and peritem onrest?
                 onRest && onRest(item, slot, ctrl.merged)
+
                 // Only call onRest when all springs have come to rest
                 if (
                   ![...instances.current.values()].some(v => v.ctrl.isActive)
                 ) {
-                  if(ref) {
+                  if (ref) {
                     startQueue.current.endResolver &&
                       startQueue.current.endResolver()
                     startQueue.current.endResolver = null
-                    // update when all transitions is complete to clean dom of removed elements.
-                    forceUpdate()
                   }
+                  // update when all transitions is complete to clean dom of removed elements.
+                  forceUpdate()
                 }
               }
             }
@@ -237,7 +239,6 @@ function useTransition (props) {
 
   useImperativeMethods(ref, () => ({
     start: resolve => {
-      console.log('Transmision start')
       startQueue.current.endResolver = resolve
       while (startQueue.current.queue.length) {
         const start = startQueue.current.queue.dequeue()

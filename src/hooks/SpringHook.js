@@ -19,7 +19,6 @@ export function useSpring (params) {
 
   React.useImperativeMethods(props.ref, () => ({
     start: resolve => {
-      console.log('starting' , ' ...... ', 'SpringHook')
       endResolver.current = resolve
       ctrl.start(onHalt)
     },

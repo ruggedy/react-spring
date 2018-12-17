@@ -21,27 +21,15 @@ import range from 'lodash/range'
 function useChain (args) {
   useEffect(() => {
     let queue = Promise.resolve()
-    let index = 0
     for (let ref of args) {
-      // console.log('  starting', ref.current)
       if (ref && ref.current) {
         queue = queue.then(r => {
-          // console.log(ref, 'refs')
           return new Promise(resolve => {
-            // console.log('starting' , ' ...... ', ref.current.tag)
+            console.log('starting' , ' ...... ', ref.current.tag)
             ref.current.start(resolve)
           })
         })
       }
-      //   if (ref && ref.current) {
-      //     if (Array.isArray(ref.current))
-      //       queue = queue.then(r =>
-      //         Promise.all(
-      //           ref.current.map(ref => new Promise(res => ref.start(res)))
-      //         )
-      //       )
-      //     else queue = queue.then(r => new Promise(res => ref.current.start(res)))
-      //   }
     }
   })
 }

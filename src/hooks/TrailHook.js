@@ -41,7 +41,7 @@ export function useTrail (count, params) {
     props => {
       for (let [idx, ctrl] of instances.current.entries()) {
         ctrl.update(props)
-        if(!props.ref) {
+        if (!props.ref) {
           ctrl.start(instances.current.size - 1 === idx && onHalt(ctrl))
         }
       }
@@ -53,7 +53,7 @@ export function useTrail (count, params) {
   React.useImperativeMethods(props.ref, () => ({
     start: resolve => {
       endResolver.current = resolve
-      for( let [idx, ctrl] of instances.current.entries() ) {
+      for (let [idx, ctrl] of instances.current.entries()) {
         ctrl.start(instances.current.size - 1 === idx && onHalt(ctrl))
       }
     },
@@ -68,7 +68,13 @@ export function useTrail (count, params) {
 
   React.useLayoutEffect(() => void (!isFunctionProps && update(props)))
 
-  const propValues = Array.from(instances.current.values()).map(ctrl =>ctrl.getValues())
+  const propValues = Array.from(instances.current.values()).reduce(
+    (acc, ctrl) => {
+      reverse ? acc.unshift(ctrl.getValues()) : acc.push(ctrl.getValues())
+      return acc
+    },
+    []
+  )
 
   return isFunctionProps
     ? [
